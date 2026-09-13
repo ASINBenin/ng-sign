@@ -1,0 +1,103 @@
+<div layout="column" class="signature-setup-container" flex>
+    <!-- ÉCRAN BLANC DE CHARGEMENT CENTRÉ -->
+    <div ng-if="isLoading" class="sig-auth-loading-overlay" layout="column" layout-align="center center" flex>
+        <md-progress-circular md-mode="indeterminate" md-diameter="48" style="margin-bottom: 16px;"></md-progress-circular>
+        <h3 style="color: #1e293b; font-weight: 600; font-size: 16px; margin: 0 0 6px 0;" translate>Preparing the signature...</h3>
+        <p style="color: #64748b; font-size: 13px; margin: 0;" translate>Loading the document and signatories...</p>
+    </div>
+
+    <div ng-show="!isLoading" layout="column" flex>
+    <!-- BARRE D'OUTILS SUPÉRIEURE ÉPURÉE -->
+    <div class="sig-topbar" layout="row" layout-align="space-between center">
+        <div layout="row" layout-align="start center">
+            <h1 class="sig-title" translate>Signature setup</h1>
+        </div>
+
+        <!-- CONTRÔLES DE NAVIGATION DU PDF AVEC INPUT DIRECT -->
+        <div layout="row" layout-align="center center" class="pdf-controls">
+            <md-button class="md-icon-button" ng-click="prevPage()" ng-disabled="pdfState.currentPage <= 1" aria-label="{{ 'Previous page' | translate }}">
+                <md-icon>chevron_left</md-icon>
+            </md-button>
+            <div class="pdf-page-indicator" layout="row" layout-align="center center">
+                <span translate>Page</span>
+                <input type="number"
+                       class="pdf-page-input"
+                       ng-model="pdfState.currentPage"
+                       ng-change="onPageInputChange()"
+                       ng-blur="onPageInputBlur()"
+                       ng-keyup="$event.keyCode === 13 && onPageInputBlur()"
+                       min="1"
+                       max="{{ pdfState.totalPages }}"
+                       aria-label="{{ 'Page number' | translate }}" />
+                <span>/ {{ pdfState.totalPages }}</span>
+            </div>
+            <md-button class="md-icon-button" ng-click="nextPage()" ng-disabled="pdfState.currentPage >= pdfState.totalPages" aria-label="{{ 'Next page' | translate }}">
+                <md-icon>chevron_right</md-icon>
+            </md-button>
+
+            <span class="sig-divider"></span>
+
+            <md-button class="md-icon-button" ng-click="zoomOut()" aria-label="{{ 'Zoom out' | translate }}">
+                <md-icon>zoom_out</md-icon>
+            </md-button>
+            <span class="pdf-zoom-indicator">{{ (pdfState.scale * 100) | number:0 }}%</span>
+            <md-button class="md-icon-button" ng-click="zoomIn()" aria-label="{{ 'Zoom in' | translate }}">
+                <md-icon>zoom_in</md-icon>
+            </md-button>
+        </div>
+
+        <!-- ACTIONS -->
+        <div layout="row" layout-align="end center" style="gap: 10px;">
+            <md-button class="sig-btn-default" ng-click="goToList()" aria-label="{{ 'Signature list' | translate }}">
+                <span translate>Signature list</span>
+            </md-button>
+            <md-button class="md-raised md-primary sig-save-btn" ng-click="saveAndStartProcess()" ng-disabled="isSaving || isLaunching" aria-label="{{ 'Save' | translate }}">
+                <span ng-if="!isSaving && !isLaunching" translate>Save</span>
+                <span ng-if="isSaving || isLaunching" class="sig-btn-loading">
+                    <md-progress-circular class="sig-inline-spinner" md-mode="indeterminate" md-diameter="18"></md-progress-circular>
+                    <span translate>Saving…</span>
+                </span>
+            </md-button>
+        </div>
+    </div>
+
+    <!-- ZONE PRINCIPALE (75% PDF / 25% SIDEBAR) -->
+    <div layout="row" flex class="sig-main-content">
+        <!-- PANNEAU PDF -->
+        <div flex="75" class="pdf-viewport-panel" layout="column" layout-align="center center">
+            <pdf-viewer pdf-url="pdfUrl" current-page="pdfState.currentPage" total-pages="pdfState.totalPages" scale="pdfState.scale" pdf-state="pdfState">
+                <!-- BOÎTES DE SIGNATURE SUR LA FEUILLE -->
+                <overlay-box ng-repeat="sig in signatories track by sig.id" 
+                             ng-if="sig.page == pdfState.currentPage"
+                             signatory="sig"
+                             scale="pdfState.scale"
+                             is-active="selectedSignatory === sig"
+                             on-select="selectSignatory(sig)">
+                </overlay-box>
+            </pdf-viewer>
+        </div>
+
+        <!-- SIDEBAR SIGNATAIRES -->
+        <div flex="25" class="sig-sidebar" layout="column" md-theme="light" style="background-color: #f8fafc;">
+            <div class="sig-sidebar-header" layout="row" layout-align="space-between center" style="background-color: #ffffff; padding: 12px 16px; border-bottom: 1px solid #e2e8f0;">
+                <span class="sig-sidebar-title" style="font-weight: 700; font-size: 14px; color: #1e293b;"><span translate>Signatories</span> ({{ signatories.length }})</span>
+                <md-button class="md-icon-button md-primary" ng-click="addEmptySignatory()" title="{{ 'Add a signatory' | translate }}" aria-label="{{ 'Add a signatory' | translate }}" style="margin: 0;">
+                    <md-icon style="color: #006fba;">person_add</md-icon>
+                </md-button>
+            </div>
+
+            <!-- LISTE DES CARDS SIGNATAIRES -->
+            <md-content flex class="sig-cards-list" md-theme="light" style="background-color: #f8fafc; padding: 14px;">
+                <signatory-card ng-repeat="sig in signatories track by sig.id"
+                                signatory="sig"
+                                is-selected="selectedSignatory === sig"
+                                current-page="currentPage"
+                                current-user-id="currentUserId"
+                                on-select="selectSignatory(sig)"
+                                on-delete="removeSignatory(sig)">
+                </signatory-card>
+            </md-content>
+        </div>
+    </div>
+    </div>
+</div>

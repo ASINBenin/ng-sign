@@ -1,0 +1,1398 @@
+/* =========================================================================
+   MONARC EXTENSION MODULE - SIGNATURE ELECTRONIQUE CSS (NETTOYE & OPTIMISE)
+   ========================================================================= */
+
+/* 1. CONTENEURS PRINCIPAUX & LAYOUTS */
+.signature-setup-container,
+.signature-process-container {
+    min-height: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    display: flex !important;
+    flex-direction: column !important;
+    background-color: #ffffff !important;
+    position: relative !important;
+}
+
+.sig-main-content {
+    height: auto !important;
+    min-height: calc(100vh - 80px) !important;
+    overflow: visible !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    flex: 1 !important;
+}
+
+.sig-auth-loading-overlay {
+    width: 100% !important;
+    min-height: calc(100vh - 80px) !important;
+    background-color: #ffffff !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 32px 16px !important;
+    box-sizing: border-box !important;
+    z-index: 1000 !important;
+}
+
+/* 2. TOPBARS & CONTROLES */
+.sig-topbar {
+    height: 56px !important;
+    min-height: 56px !important;
+    background-color: #ffffff !important;
+    border-bottom: 1px solid #cfd8dc !important;
+    padding: 0 20px !important;
+    z-index: 10 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    box-sizing: border-box !important;
+}
+
+.sig-title {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    margin: 0 !important;
+    display: inline-block !important;
+    letter-spacing: 0.01em !important;
+}
+
+.pdf-controls {
+    background-color: #f1f3f4 !important;
+    border: 1px solid #dcdfe3 !important;
+    border-radius: 24px !important;
+    padding: 2px 12px !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.pdf-controls .md-icon-button {
+    width: 32px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    padding: 4px !important;
+    margin: 0 2px !important;
+    line-height: 24px !important;
+}
+
+.pdf-controls .md-icon-button md-icon {
+    color: #2c3e50 !important;
+    font-size: 20px !important;
+    width: 20px !important;
+    height: 20px !important;
+}
+
+.pdf-controls .md-icon-button:hover:not([disabled]) {
+    background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.pdf-controls .md-icon-button[disabled] md-icon {
+    color: #b0bec5 !important;
+}
+
+.pdf-page-indicator {
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #334155 !important;
+    margin: 0 6px !important;
+    user-select: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+
+.pdf-page-input {
+    width: 32px !important;
+    height: 22px !important;
+    line-height: 22px !important;
+    text-align: center !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 4px !important;
+    font-size: 12.5px !important;
+    font-weight: 600 !important;
+    color: #0f172a !important;
+    background-color: #ffffff !important;
+    outline: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    transition: all 0.15s ease !important;
+    -moz-appearance: textfield !important;
+}
+
+.pdf-page-input::-webkit-outer-spin-button,
+.pdf-page-input::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+}
+
+.pdf-page-input:focus {
+    border-color: #006fba !important;
+    box-shadow: 0 0 0 2px rgba(0, 111, 186, 0.18) !important;
+    background-color: #ffffff !important;
+}
+
+.pdf-zoom-indicator {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    margin: 0 8px !important;
+    user-select: none !important;
+    display: inline-block !important;
+    line-height: 1 !important;
+}
+
+.sig-divider {
+    width: 1px !important;
+    height: 18px !important;
+    background-color: #cbd5e1 !important;
+    margin: 0 8px !important;
+    display: inline-block !important;
+}
+
+.sig-page-switch-btn {
+    background: #e0f2fe !important;
+    color: #0284c7 !important;
+    border: 1px solid #bae6fd !important;
+    border-radius: 12px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    padding: 2px 10px !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    outline: none !important;
+}
+
+.sig-page-switch-btn:hover {
+    background: #bae6fd !important;
+    color: #0369a1 !important;
+}
+
+/* BOUTONS D'ACTION */
+.sig-save-btn {
+    margin: 0 !important;
+    min-height: 34px !important;
+    height: 34px !important;
+    min-width: 170px !important;   /* largeur stable : pas de « saut » Enregistrer -> loader */
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+    border-radius: 4px !important;
+    padding: 0 18px !important;
+    background-color: #006fba !important;
+    color: #ffffff !important;
+    box-shadow: 0 1px 3px rgba(0, 111, 186, 0.25) !important;
+}
+
+.sig-save-btn:hover:not([disabled]) {
+    background-color: #005d9b !important;
+    color: #ffffff !important;
+}
+
+/* `[disabled]` ne se produit que pendant l'enregistrement : on garde le bouton bien visible
+   avec son loader (cohérent avec le bouton « Signer » de la page process). */
+.sig-save-btn[disabled] {
+    background-color: #006fba !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    cursor: progress !important;
+    box-shadow: none !important;
+}
+
+.sig-reject-btn {
+    margin: 0 !important;
+    min-height: 34px !important;
+    height: 34px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+    border-radius: 4px !important;
+    padding: 0 16px !important;
+    background-color: #fee2e2 !important;
+    color: #991b1b !important;
+    border: 1px solid #fecaca !important;
+    box-shadow: none !important;
+}
+
+.sig-reject-btn:hover:not([disabled]) {
+    background-color: #fecaca !important;
+}
+
+/* Bouton « Signer » : largeur stable (pas de « trou » quand le libellé passe au loader)
+   et loader visible même pendant l'ouverture du modal de choix de méthode. */
+.sig-sign-btn {
+    min-width: 190px !important;
+    min-height: 34px !important;
+}
+
+/* `[disabled]` = action en cours : bouton bien visible + loader (cohérent avec « Enregistrer »). */
+.sig-sign-btn[disabled] {
+    opacity: 1 !important;
+    background-color: #006fba !important;
+    color: #ffffff !important;
+    cursor: progress !important;
+}
+
+/* Libellé + spinner in-bouton, réutilisé par tous les boutons d'action asynchrones
+   (Enregistrer / Signer / Refuser) pour un rendu cohérent. */
+.sig-btn-loading {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    line-height: 1 !important;
+}
+
+/* spinner blanc sur fond bleu (Enregistrer, Signer) */
+.sig-save-btn .sig-inline-spinner path,
+.sig-sign-btn .sig-inline-spinner path {
+    stroke: #ffffff !important;
+}
+
+/* spinner rouge foncé sur fond rouge pâle (Refuser) */
+.sig-reject-btn .sig-inline-spinner path {
+    stroke: #991b1b !important;
+}
+
+.sig-btn-default {
+    background-color: #ffffff !important;
+    color: #263238 !important;
+    border: 1px solid #cfd8dc !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06) !important;
+    min-height: 34px !important;
+    height: 34px !important;
+    padding: 0 14px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+    border-radius: 4px !important;
+    margin: 0 !important;
+}
+
+.sig-btn-default:hover {
+    background-color: #f8fafc !important;
+    border-color: #b0bec5 !important;
+}
+
+/* 3. PANNEAU PDF VIEWER */
+.pdf-viewport-panel {
+    flex: 1 !important;
+    min-height: 800px !important;
+    /* auto (et pas visible) : en paysage / zoom élevé la page défile dans le panneau
+       au lieu de déborder de façon centrée et inatteignable. */
+    overflow: auto !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+    padding: 30px !important;
+    background-color: #525659 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    /* stretch : le <pdf-viewer> occupe toute la largeur du panneau, ce qui permet à
+       .pdf-page-container de se centrer via margin:auto (centrage block, pas flex :
+       en cas de page plus large, ça déborde à DROITE et reste scrollable). */
+    align-items: stretch !important;
+}
+
+/* Élément custom sans style par défaut : sans ça il se réduit à la largeur de son
+   contenu et margin:auto sur .pdf-page-container n'a aucun espace à distribuer. */
+pdf-viewer,
+.pdf-viewer-wrapper {
+    display: block !important;
+    width: 100% !important;
+}
+
+.pdf-page-container {
+    position: relative !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
+    background-color: #ffffff !important;
+    /* centré tant que la page tient dans le panneau ; déborde à droite (scrollable) sinon */
+    margin: 0 auto !important;
+}
+
+/* canvas en block : supprime l'espace de descente inline qui rendait
+   .pdf-page-container (et donc .pdf-overlay) plus haut que le canvas. */
+#pdf-canvas {
+    display: block !important;
+}
+
+.pdf-overlay {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    pointer-events: none !important;
+}
+
+/* 4. BOITES DE SIGNATURE INTERACTIVES (SETUP) */
+.sig-box {
+    position: absolute !important;
+    border: 1.5px dashed #006fba !important;
+    background-color: rgba(0, 111, 186, 0.06) !important;
+    border-radius: 4px !important;
+    cursor: grab !important;
+    user-select: none !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08) !important;
+    z-index: 50 !important;
+    pointer-events: auto !important;
+    /* JAMAIS "all" : animer top/left/width/height fait "glisser" les cadres
+       à chaque reflow (zoom, nav page, resize) et traîner pendant le drag. */
+    transition: box-shadow 0.15s ease, border-color 0.15s ease, background-color 0.15s ease !important;
+}
+
+.sig-box:hover {
+    background-color: rgba(0, 111, 186, 0.09) !important;
+    border-color: #005d9b !important;
+}
+
+.sig-box-dragging {
+    cursor: grabbing !important;
+    opacity: 0.95 !important;
+    box-shadow: 0 4px 12px rgba(0, 111, 186, 0.25) !important;
+}
+
+.sig-box-active {
+    border: 1.5px solid #006fba !important;
+    background-color: rgba(0, 111, 186, 0.1) !important;
+    box-shadow: 0 0 0 3px rgba(0, 111, 186, 0.18) !important;
+}
+
+.sig-resize-handle {
+    position: absolute !important;
+    bottom: 0 !important;
+    right: 0 !important;
+    width: 10px !important;
+    height: 10px !important;
+    background-color: #006fba !important;
+    cursor: nwse-resize !important;
+    border-top-left-radius: 3px !important;
+    pointer-events: auto !important;
+    z-index: 60 !important;
+}
+
+.sig-box-body {
+    flex: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    text-align: center !important;
+    padding: 4px !important;
+    box-sizing: border-box !important;
+    pointer-events: none !important;
+}
+
+.sig-box-label {
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    color: #475569 !important;
+    line-height: 1.2 !important;
+    text-align: center !important;
+}
+
+/* 5. BOITES DE SIGNATURE PROCESS */
+.sig-locked-box {
+    position: absolute !important;
+    border: 1.5px dashed #cbd5e1 !important;
+    background-color: rgba(248, 250, 252, 0.7) !important;
+    border-radius: 4px !important;
+    user-select: none !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    z-index: 40 !important;
+    pointer-events: auto !important;
+    /* idem .sig-box : pas d'animation sur la position/taille */
+    transition: box-shadow 0.15s ease, border-color 0.15s ease, background-color 0.15s ease !important;
+}
+
+.sig-box-current-signer {
+    border: 2px dashed #006fba !important;
+    background-color: rgba(0, 111, 186, 0.06) !important;
+    z-index: 50 !important;
+    box-shadow: 0 0 0 3px rgba(0, 111, 186, 0.15) !important;
+}
+
+.sig-soft-tag {
+    position: absolute !important;
+    top: -9px !important;
+    left: 6px !important;
+    background-color: #006fba !important;
+    color: #ffffff !important;
+    font-size: 10px !important;
+    font-weight: 500 !important;
+    padding: 1px 6px !important;
+    border-radius: 3px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    line-height: 1.3 !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
+}
+
+.sig-soft-tag-signed {
+    background-color: #2e7d32 !important;
+}
+
+.sig-soft-tag-other {
+    background-color: #546e7a !important;
+}
+
+.sig-locked-body {
+    flex: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    padding: 4px !important;
+}
+
+.sig-soft-hint {
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    color: #006fba !important;
+    text-align: center !important;
+    opacity: 0.85 !important;
+}
+
+.sig-custom-stamp {
+    max-width: 95% !important;
+    max-height: 95% !important;
+    object-fit: contain !important;
+}
+
+/* 6. SIDEBAR DU SETUP & PROCESS */
+.sig-sidebar {
+    width: 330px !important;
+    min-width: 330px !important;
+    max-width: 380px !important;
+    position: sticky !important;
+    top: 16px !important;
+    align-self: flex-start !important;
+    max-height: calc(100vh - 32px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    flex-shrink: 0 !important;
+    border-left: 1px solid #e2e8f0 !important;
+    background-color: #f8fafc !important;
+    background: #f8fafc !important;
+    box-sizing: border-box !important;
+}
+
+.sig-sidebar-header {
+    padding: 12px 16px !important;
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    box-sizing: border-box !important;
+}
+
+.sig-sidebar-title {
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    margin: 0 !important;
+}
+
+.sig-cards-list,
+md-content.sig-cards-list,
+.sig-sidebar md-content {
+    flex: 1 !important;
+    overflow: visible !important;
+    padding: 14px !important;
+    box-sizing: border-box !important;
+    background-color: #f8fafc !important;
+    background: #f8fafc !important;
+}
+
+.sig-card {
+    background: #ffffff !important;
+    border-radius: 6px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-left: 4px solid #006fba !important;
+    padding: 10px 12px !important;
+    margin-bottom: 10px !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+.sig-card:hover {
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08) !important;
+    border-color: #cbd5e1 !important;
+}
+
+.sig-card-active {
+    border-color: #93c5fd !important;
+    background-color: #f0f9ff !important;
+    box-shadow: 0 0 0 2px rgba(0, 111, 186, 0.18) !important;
+}
+
+.sig-card-badge {
+    width: 22px !important;
+    height: 22px !important;
+    min-width: 22px !important;
+    border-radius: 50% !important;
+    color: #ffffff !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-right: 8px !important;
+}
+
+.sig-card-name {
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+}
+
+.sig-card-email {
+    font-size: 11.5px !important;
+    color: #64748b !important;
+}
+
+.sig-card-tag-you {
+    display: inline-block !important;
+    background-color: #e0f2fe !important;
+    color: #0284c7 !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    padding: 1px 6px !important;
+    border-radius: 4px !important;
+    border: 1px solid #bae6fd !important;
+    margin-top: 3px !important;
+    width: fit-content !important;
+}
+
+.sig-card-unassigned {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #64748b !important;
+    line-height: 1.2 !important;
+}
+
+.sig-card-selector {
+    margin: 8px 0 6px 0 !important;
+    width: 100% !important;
+}
+
+.sig-user-selector-wrapper {
+    width: 100% !important;
+}
+
+.sig-user-selector-wrapper md-autocomplete {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    height: 34px !important;
+    min-height: 34px !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+    transition: all 0.15s ease !important;
+}
+
+.sig-user-selector-wrapper md-autocomplete:focus-within {
+    border-color: #006fba !important;
+    box-shadow: 0 0 0 2px rgba(0, 111, 186, 0.15) !important;
+}
+
+.sig-user-selector-wrapper md-autocomplete md-autocomplete-wrap {
+    height: 32px !important;
+    box-shadow: none !important;
+    border-radius: 6px !important;
+}
+
+.sig-user-selector-wrapper md-autocomplete input:not(.md-input) {
+    height: 32px !important;
+    line-height: 32px !important;
+    font-size: 12.5px !important;
+    color: #1e293b !important;
+    padding: 0 10px !important;
+    background: transparent !important;
+}
+
+.sig-card-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+}
+
+.sig-action-btn {
+    width: 28px !important;
+    height: 28px !important;
+    min-height: 28px !important;
+    min-width: 28px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 4px !important;
+    background: transparent !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.sig-action-btn md-icon {
+    font-size: 18px !important;
+    width: 18px !important;
+    height: 18px !important;
+    line-height: 18px !important;
+}
+
+.sig-edit-btn md-icon { color: #64748b !important; }
+.sig-edit-btn:hover { background-color: #f1f5f9 !important; }
+.sig-edit-btn:hover md-icon { color: #006fba !important; }
+
+.sig-delete-btn md-icon { color: #ef4444 !important; }
+.sig-delete-btn:hover { background-color: #fee2e2 !important; }
+.sig-delete-btn:hover md-icon { color: #b91c1c !important; }
+
+/* AUTOCOMPLETE SUGGESTIONS DROPDOWN */
+md-virtual-repeat-container.md-autocomplete-suggestions-container,
+.md-autocomplete-suggestions-container {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+    z-index: 99999 !important;
+}
+
+.md-autocomplete-suggestions-container md-virtual-repeat-container,
+.md-autocomplete-suggestions-container .md-virtual-repeat-scroller,
+.md-autocomplete-suggestions {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+}
+
+.md-autocomplete-suggestions li {
+    background-color: #ffffff !important;
+    color: #1e293b !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    padding: 8px 14px !important;
+    cursor: pointer !important;
+}
+
+.md-autocomplete-suggestions li:hover,
+.md-autocomplete-suggestions li.selected {
+    background-color: #f0f9ff !important;
+}
+
+/* 7. BANDE D'IMPORT IMAGE DE SIGNATURE */
+.sig-compact-upload-wrapper {
+    margin-bottom: 16px !important;
+    width: 100% !important;
+}
+
+.sig-compact-upload-bar {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 10px 14px !important;
+    background-color: #ffffff !important;
+    border: 1.5px dashed #cfd8dc !important;
+    border-radius: 6px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #334155 !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    outline: none !important;
+    box-sizing: border-box !important;
+    line-height: 20px !important;
+}
+
+.sig-compact-upload-bar:hover {
+    background-color: #f1f5f9 !important;
+    border-color: #94a3b8 !important;
+    color: #0f172a !important;
+}
+
+.sig-compact-preview-zone {
+    margin-top: 8px !important;
+    padding: 8px 12px !important;
+    background-color: #ffffff !important;
+    border: 1px solid #cfd8dc !important;
+    border-radius: 6px !important;
+}
+
+.sig-compact-preview-img-box {
+    max-height: 40px !important;
+    max-width: 120px !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.sig-compact-preview-img-box img {
+    max-height: 38px !important;
+    max-width: 100% !important;
+    object-fit: contain !important;
+}
+
+.sig-compact-remove-btn {
+    background: none !important;
+    border: none !important;
+    color: #dc2626 !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    padding: 2px 6px !important;
+    border-radius: 3px !important;
+}
+
+.sig-compact-remove-btn:hover {
+    background-color: #fee2e2 !important;
+}
+
+/* 8. LISTE DES SIGNATURES & TABLEAU */
+.anr-signatures-mgmt {
+    width: 100% !important;
+}
+
+.anr-signatures-mgmt .main-card {
+    margin: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.anr-signatures-mgmt .md-table th.md-column {
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    color: #475569 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.03em !important;
+    padding: 12px 16px !important;
+    background-color: #f8fafc !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.anr-signatures-mgmt .md-table td.md-cell {
+    padding: 12px 16px !important;
+    font-size: 13px !important;
+    color: #1e293b !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    vertical-align: middle !important;
+}
+
+.anr-signatures-mgmt .sig-table-row:hover td.md-cell {
+    background-color: #f8fafc !important;
+}
+
+.anr-signatures-mgmt td.md-cell .md-button,
+.anr-signatures-mgmt .sig-table-btn {
+    margin: 0 !important;
+    min-height: 28px !important;
+    height: 28px !important;
+    line-height: 28px !important;
+    font-size: 11.5px !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+    padding: 0 12px !important;
+    border-radius: 4px !important;
+    box-shadow: none !important;
+    box-shadow: 0 0 0 0 transparent !important;
+    border: none !important;
+    outline: none !important;
+}
+
+.anr-signatures-mgmt .sig-table-btn.md-primary {
+    background-color: #006fba !important;
+    color: #ffffff !important;
+}
+
+.anr-signatures-mgmt .sig-table-btn.md-primary:hover {
+    background-color: #005d9b !important;
+}
+
+.anr-signatures-mgmt .sig-table-btn-neutral {
+    background-color: #f1f5f9 !important;
+    color: #334155 !important;
+    border: 1px solid #cbd5e1 !important;
+}
+
+.anr-signatures-mgmt .sig-table-btn-neutral:hover {
+    background-color: #e2e8f0 !important;
+}
+
+.anr-signatures-mgmt .sig-table-btn.md-warn {
+    background-color: transparent !important;
+    color: #dc2626 !important;
+}
+
+.anr-signatures-mgmt .sig-table-btn.md-warn:hover {
+    background-color: #fee2e2 !important;
+}
+
+.sig-badge-id {
+    font-weight: 700 !important;
+    color: #006fba !important;
+    background: #e0f2fe !important;
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
+    font-size: 12px !important;
+    display: inline-block !important;
+}
+
+.sig-doc-info {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.sig-doc-name {
+    color: #0f172a !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+}
+
+.sig-doc-tag {
+    color: #64748b !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    margin-top: 2px !important;
+}
+
+.sig-date-text {
+    color: #263238 !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    display: inline-block !important;
+}
+
+.sig-stepper-btn-compact {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    background-color: #f0fdf4 !important;
+    border: 1px solid #bbf7d0 !important;
+    padding: 2px 8px !important;
+    border-radius: 12px !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    outline: none !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    color: #166534 !important;
+    height: 22px !important;
+}
+
+.sig-stepper-btn-compact:hover {
+    background-color: #dcfce7 !important;
+    border-color: #86efac !important;
+}
+
+.sig-circuit-icon {
+    font-size: 13px !important;
+    width: 13px !important;
+    height: 13px !important;
+    color: #166534 !important;
+    margin-right: 1px !important;
+}
+
+.sig-chevron-indicator {
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: #166534 !important;
+    line-height: 1 !important;
+}
+
+.sig-list-loading,
+.sig-list-empty {
+    background: #ffffff !important;
+    border-radius: 8px !important;
+    padding: 60px 20px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    border: 1px solid #cfd8dc !important;
+    color: #64748b !important;
+    min-height: 200px !important;
+}
+
+/* 9. BADGES & CHIPS DE STATUT */
+.sig-already-signed,
+.sig-waiting-turn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    height: 32px !important;
+    line-height: 32px !important;
+    padding: 0 12px !important;
+    box-sizing: border-box !important;
+    border-radius: 6px !important;
+}
+
+.sig-already-signed {
+    background-color: #f0fdf4 !important;
+    border: 1px solid #bbf7d0 !important;
+    color: #166534 !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+}
+
+.sig-waiting-turn {
+    background-color: #fffbeb !important;
+    border: 1px solid #fde68a !important;
+    color: #b45309 !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+}
+
+.sig-already-signed md-icon,
+.sig-waiting-turn md-icon {
+    font-size: 18px !important;
+    width: 18px !important;
+    height: 18px !important;
+    min-width: 18px !important;
+    min-height: 18px !important;
+    line-height: 18px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    vertical-align: middle !important;
+}
+
+.sig-already-signed md-icon { color: #16a34a !important; }
+.sig-waiting-turn md-icon { color: #d97706 !important; }
+
+.sig-already-signed span,
+.sig-waiting-turn span {
+    line-height: 1 !important;
+    display: inline-block !important;
+}
+
+.sig-status-tag-compact {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    padding: 3px 8px !important;
+    border-radius: 4px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+    text-transform: none !important;
+    box-sizing: border-box !important;
+    vertical-align: middle !important;
+}
+
+.sig-status-icon {
+    color: inherit !important;
+    font-size: 13px !important;
+    width: 13px !important;
+    height: 13px !important;
+    min-width: 13px !important;
+    min-height: 13px !important;
+    line-height: 13px !important;
+    margin: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    vertical-align: middle !important;
+}
+
+.sig-status-text {
+    line-height: 1 !important;
+    display: inline-block !important;
+}
+
+.sig-status-finished, .sig-status-signed, .sig-status-completed {
+    background-color: #dcfce7 !important;
+    color: #166534 !important;
+    border: 1px solid #bbf7d0 !important;
+}
+.sig-status-finished md-icon, .sig-status-signed md-icon, .sig-status-completed md-icon {
+    color: #166534 !important;
+    fill: #166534 !important;
+}
+
+.sig-status-pending, .sig-status-partially_signed, .sig-status-in_progress {
+    background-color: #fef3c7 !important;
+    color: #92400e !important;
+    border: 1px solid #fde68a !important;
+}
+.sig-status-pending md-icon, .sig-status-partially_signed md-icon, .sig-status-in_progress md-icon {
+    color: #92400e !important;
+    fill: #92400e !important;
+}
+
+.sig-status-rejected, .sig-status-cancelled, .sig-status-canceled {
+    background-color: #fee2e2 !important;
+    color: #991b1b !important;
+    border: 1px solid #fecaca !important;
+}
+.sig-status-rejected md-icon, .sig-status-cancelled md-icon, .sig-status-canceled md-icon {
+    color: #991b1b !important;
+    fill: #991b1b !important;
+}
+
+.sig-status-pending_configuration, .sig-status-pending_config, .sig-status-draft {
+    background-color: #f1f5f9 !important;
+    color: #475569 !important;
+    border: 1px solid #cbd5e1 !important;
+}
+.sig-status-pending_configuration md-icon, .sig-status-pending_config md-icon, .sig-status-draft md-icon {
+    color: #475569 !important;
+    fill: #475569 !important;
+}
+
+/* 10. DIALOGUE STEPPER TIMELINE */
+.sig-stepper-dialog-soft {
+    max-width: 520px !important;
+    width: 95% !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15) !important;
+}
+
+.sig-stepper-toolbar-soft {
+    background-color: #006fba !important;
+    min-height: 48px !important;
+    height: 48px !important;
+}
+
+.sig-stepper-content-soft {
+    padding: 16px 20px !important;
+    background-color: #ffffff !important;
+}
+
+.sig-summary-soft {
+    padding-bottom: 12px !important;
+    margin-bottom: 16px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+}
+
+.sig-timeline-soft {
+    position: relative !important;
+    padding: 4px 0 !important;
+}
+
+.sig-timeline-row {
+    position: relative !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 14px !important;
+    padding-bottom: 18px !important;
+}
+
+.sig-timeline-row:last-child {
+    padding-bottom: 4px !important;
+}
+
+.sig-line-soft {
+    position: absolute !important;
+    top: 32px !important;
+    left: 13px !important;
+    width: 2px !important;
+    height: calc(100% - 16px) !important;
+    background-color: #e2e8f0 !important;
+    z-index: 1 !important;
+}
+
+.sig-dot-soft {
+    position: relative !important;
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 2 !important;
+    background-color: #f8fafc !important;
+    color: #64748b !important;
+    border: 2px solid #cbd5e1 !important;
+    margin-top: 4px !important;
+    flex-shrink: 0 !important;
+}
+
+.sig-dot-signed { background-color: #10b981 !important; color: #fff !important; border-color: #059669 !important; }
+.sig-dot-current { background-color: #006fba !important; color: #fff !important; border-color: #005d9b !important; box-shadow: 0 0 0 3px rgba(0, 111, 186, 0.18) !important; }
+.sig-dot-rejected { background-color: #ef4444 !important; color: #fff !important; border-color: #dc2626 !important; }
+
+.sig-card-soft {
+    background: #f8fafc !important;
+    border-radius: 6px !important;
+    padding: 10px 14px !important;
+    border: 1px solid #e2e8f0 !important;
+    flex: 1 !important;
+}
+
+.sig-user-name-soft {
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+}
+
+.sig-pill-soft {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    padding: 2px 8px !important;
+    border-radius: 12px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+}
+
+.sig-pill-signed { background-color: #dcfce7 !important; color: #15803d !important; border: 1px solid #bbf7d0 !important; }
+.sig-pill-current { background-color: #eff6ff !important; color: #006fba !important; border: 1px solid #bfdbfe !important; }
+.sig-pill-waiting { background-color: #f1f5f9 !important; color: #64748b !important; border: 1px solid #e2e8f0 !important; }
+.sig-pill-rejected { background-color: #fee2e2 !important; color: #b91c1c !important; border: 1px solid #fecaca !important; }
+
+.sig-meta-soft {
+    font-size: 12px !important;
+    margin-top: 6px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+}
+
+.sig-signed-date {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    color: #15803d !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    line-height: 1 !important;
+}
+
+.sig-signed-date md-icon {
+    font-size: 14px !important;
+    width: 14px !important;
+    height: 14px !important;
+    min-width: 14px !important;
+    min-height: 14px !important;
+    line-height: 14px !important;
+    margin: 0 !important;
+    color: #10b981 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.sig-step-current-hint {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    color: #d97706 !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    line-height: 1 !important;
+}
+
+.sig-step-current-hint md-icon {
+    font-size: 14px !important;
+    width: 14px !important;
+    height: 14px !important;
+    min-width: 14px !important;
+    min-height: 14px !important;
+    line-height: 14px !important;
+    margin: 0 !important;
+    color: #d97706 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.sig-step-next-hint {
+    color: #94a3b8 !important;
+    font-size: 12px !important;
+}
+
+/* 11. MODAL CHOIX DU MODE DE SIGNATURE */
+.sig-method-dialog-refined {
+    max-width: 440px !important;
+    width: 100% !important;
+    border-radius: 6px !important;
+    overflow: hidden !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
+}
+
+.sig-method-dialog-refined md-input-container textarea,
+.sig-method-dialog-refined md-input-container input {
+    color: #0f172a !important;
+    font-size: 13.5px !important;
+    line-height: 1.5 !important;
+}
+
+.sig-method-dialog-refined md-input-container label {
+    color: #475569 !important;
+    font-size: 13px !important;
+}
+
+.sig-method-dialog-refined md-input-container textarea::placeholder,
+.sig-method-dialog-refined md-input-container input::placeholder {
+    color: #94a3b8 !important;
+}
+
+.sig-dialog-header {
+    background-color: #006fba !important;
+    min-height: 44px !important;
+    height: 44px !important;
+    color: #ffffff !important;
+}
+
+.sig-dialog-header .md-toolbar-tools {
+    height: 44px !important;
+    padding: 0 12px 0 16px !important;
+}
+
+.sig-dialog-header h2 {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: #ffffff !important;
+    margin: 0 !important;
+}
+
+.sig-dialog-body {
+    padding: 16px !important;
+    background-color: #ffffff !important;
+}
+
+.sig-method-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+}
+
+.sig-method-item {
+    display: flex !important;
+    align-items: center !important;
+    padding: 11px 14px !important;
+    border-radius: 6px !important;
+    border: 1px solid #e2e8f0 !important;
+    background-color: #f8fafc !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease-in-out !important;
+}
+
+.sig-method-item:hover {
+    border-color: #006fba !important;
+    background-color: #f0f7ff !important;
+    box-shadow: 0 2px 6px rgba(0, 111, 186, 0.08) !important;
+}
+
+.sig-method-item-icon {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    border-radius: 6px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-right: 12px !important;
+}
+
+.sig-icon-usb-soft { background-color: #ecfdf5 !important; color: #059669 !important; }
+.sig-icon-usb-soft md-icon { font-size: 20px !important; width: 20px !important; height: 20px !important; color: #059669 !important; }
+
+.sig-icon-cloud-soft { background-color: #eff6ff !important; color: #006fba !important; }
+.sig-icon-cloud-soft md-icon { font-size: 20px !important; width: 20px !important; height: 20px !important; color: #006fba !important; }
+
+.sig-method-item-name {
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+}
+
+.sig-method-item-sub {
+    font-size: 11.5px !important;
+    color: #64748b !important;
+    margin-top: 2px !important;
+}
+
+.sig-cancel-btn {
+    min-height: 28px !important;
+    height: 28px !important;
+    line-height: 28px !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    text-transform: none !important;
+    color: #64748b !important;
+    padding: 0 12px !important;
+    margin: 0 !important;
+    border-radius: 4px !important;
+}
+
+.sig-cancel-btn:hover {
+    background-color: #f1f5f9 !important;
+    color: #334155 !important;
+}
+
+/* 12. PAGE CALLBACK PLEIN ECRAN */
+.sig-callback-fullscreen {
+    position: relative !important;
+    width: 100% !important;
+    min-height: calc(100vh - 110px) !important;
+    background-color: #ffffff !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 32px 16px !important;
+    box-sizing: border-box !important;
+}
+
+.sig-callback-card {
+    background: #ffffff !important;
+    border-radius: 6px !important;
+    padding: 28px 24px !important;
+    max-width: 420px !important;
+    width: 100% !important;
+    text-align: center !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1) !important;
+    border: 1px solid #cfd8dc !important;
+}
+
+.sig-card-success { border-top: 3px solid #2e7d32 !important; }
+.sig-card-error { border-top: 3px solid #d32f2f !important; }
+
+.sig-callback-title {
+    font-size: 17px !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    margin: 0 0 8px 0 !important;
+}
+
+.sig-callback-desc {
+    font-size: 13px !important;
+    color: #64748b !important;
+    line-height: 1.5 !important;
+    margin: 0 0 20px 0 !important;
+}
+
+.sig-btn-download {
+    background-color: #006fba !important;
+    color: #ffffff !important;
+}
+.sig-btn-download:hover { background-color: #005d9b !important; }
+
+.sig-btn-list {
+    background-color: #ffffff !important;
+    color: #263238 !important;
+    border: 1px solid #cfd8dc !important;
+}
+.sig-btn-list:hover { background-color: #f1f5f9 !important; }

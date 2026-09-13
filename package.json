@@ -1,0 +1,8 @@
+{
+  "name": "ng_sign",
+  "version": "1.0.0",
+  "description": "MONARC Electronic Signature Module (TrustedX Integration)",
+  "main": "src/SignModule.js",
+  "author": "ASIN",
+  "license": "AGPL-3.0"
+}

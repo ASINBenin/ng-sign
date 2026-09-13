@@ -1,0 +1,45 @@
+<md-dialog aria-label="{{ 'Signature method' | translate }}" class="sig-method-dialog-refined">
+  <md-toolbar class="sig-dialog-header">
+    <div class="md-toolbar-tools">
+      <h2 translate>Signature method</h2>
+      <span flex></span>
+      <md-button class="md-icon-button" ng-click="cancel()" aria-label="{{ 'Close' | translate }}">
+        <md-icon>close</md-icon>
+      </md-button>
+    </div>
+  </md-toolbar>
+
+  <md-dialog-content class="sig-dialog-body">
+    <div class="sig-method-list">
+      <!-- Option 1 : Jeton USB (BJ eToken) -->
+      <div class="sig-method-item" ng-click="chooseMethod('local')">
+        <div class="sig-method-item-icon sig-icon-usb-soft">
+          <md-icon>usb</md-icon>
+        </div>
+        <div class="sig-method-item-text">
+          <div class="sig-method-item-name" translate>USB token (BJ eToken)</div>
+          <div class="sig-method-item-sub" translate>Signature via local ID or USB token</div>
+        </div>
+        <md-icon class="sig-method-item-arrow">chevron_right</md-icon>
+      </div>
+
+      <!-- Option 2 : Signature en ligne -->
+      <div class="sig-method-item" ng-click="chooseMethod('online')">
+        <div class="sig-method-item-icon sig-icon-cloud-soft">
+          <md-icon>cloud_done</md-icon>
+        </div>
+        <div class="sig-method-item-text">
+          <div class="sig-method-item-name" translate>Online signature</div>
+          <div class="sig-method-item-sub" translate>Signature via virtual ID</div>
+        </div>
+        <md-icon class="sig-method-item-arrow">chevron_right</md-icon>
+      </div>
+    </div>
+  </md-dialog-content>
+
+  <md-dialog-actions layout="row" layout-align="end center" class="sig-dialog-footer">
+    <md-button ng-click="cancel()" class="sig-cancel-btn">
+      <span translate>Cancel</span>
+    </md-button>
+  </md-dialog-actions>
+</md-dialog>

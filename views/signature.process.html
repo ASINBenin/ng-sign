@@ -1,0 +1,627 @@
+<div layout="column" class="signature-process-container" flex>
+  <!-- ÉCRAN BLANC DE CHARGEMENT CENTRÉ -->
+  <div
+    ng-if="isLoading"
+    class="sig-auth-loading-overlay"
+    layout="column"
+    layout-align="center center"
+    flex
+  >
+    <md-progress-circular
+      md-mode="indeterminate"
+      md-diameter="48"
+      style="margin-bottom: 16px"
+    ></md-progress-circular>
+    <h3
+      style="
+        color: #1e293b;
+        font-weight: 600;
+        font-size: 16px;
+        margin: 0 0 6px 0;
+      "
+      translate
+    >
+      Loading signature workspace...
+    </h3>
+    <p style="color: #64748b; font-size: 13px; margin: 0" translate>
+      Please wait while your session is being prepared...
+    </p>
+  </div>
+
+  <div ng-show="!isLoading" layout="column" flex>
+    <!-- TOPBAR DU PROCESSUS -->
+    <div class="sig-topbar" layout="row" layout-align="space-between center">
+      <div layout="row" layout-align="start center" style="gap: 12px">
+        <span class="sig-title" translate>Signature workspace</span>
+        <span class="sig-badge-id">#{{ request.id }}</span>
+        <signature-status-chip status="request.status"></signature-status-chip>
+      </div>
+
+      <!-- CONTRÔLES DE NAVIGATION DU PDF AVEC INPUT DIRECT -->
+      <div layout="row" layout-align="center center" class="pdf-controls">
+        <md-button
+          class="md-icon-button"
+          ng-click="prevPage()"
+          ng-disabled="pdfState.currentPage <= 1"
+          aria-label="{{ 'Previous page' | translate }}"
+        >
+          <md-icon>chevron_left</md-icon>
+        </md-button>
+        <div
+          class="pdf-page-indicator"
+          layout="row"
+          layout-align="center center"
+        >
+          <span translate>Page</span>
+          <input
+            type="number"
+            class="pdf-page-input"
+            ng-model="pdfState.currentPage"
+            ng-change="onPageInputChange()"
+            ng-blur="onPageInputBlur()"
+            ng-keyup="$event.keyCode === 13 && onPageInputBlur()"
+            min="1"
+            max="{{ pdfState.totalPages }}"
+            aria-label="{{ 'Page number' | translate }}"
+          />
+          <span>/ {{ pdfState.totalPages }}</span>
+        </div>
+        <md-button
+          class="md-icon-button"
+          ng-click="nextPage()"
+          ng-disabled="pdfState.currentPage >= pdfState.totalPages"
+          aria-label="{{ 'Next page' | translate }}"
+        >
+          <md-icon>chevron_right</md-icon>
+        </md-button>
+
+        <span class="sig-divider"></span>
+
+        <md-button
+          class="md-icon-button"
+          ng-click="zoomOut()"
+          aria-label="{{ 'Zoom out' | translate }}"
+        >
+          <md-icon>zoom_out</md-icon>
+        </md-button>
+        <span class="pdf-zoom-indicator"
+          >{{ (pdfState.scale * 100) | number:0 }}%</span
+        >
+        <md-button
+          class="md-icon-button"
+          ng-click="zoomIn()"
+          aria-label="{{ 'Zoom in' | translate }}"
+        >
+          <md-icon>zoom_in</md-icon>
+        </md-button>
+      </div>
+
+      <!-- ACTIONS MAJEURES -->
+      <div layout="row" layout-align="end center" style="gap: 8px">
+        <md-button
+          class="sig-btn-default"
+          ng-click="goToList()"
+          aria-label="{{ 'Signature list' | translate }}"
+        >
+          <span translate>Signature list</span>
+        </md-button>
+
+        <!-- ÉLÉMENTS D'ACTION DYNAMIQUES (zéro clignotement : affichés uniquement une fois le statut calculé) -->
+        <div
+          layout="row"
+          layout-align="end center"
+          style="gap: 8px"
+          ng-if="isStatusReady"
+        >
+          <md-button
+            class="md-raised sig-reject-btn"
+            ng-click="rejectDocument($event)"
+            ng-if="isMyTurn"
+            ng-disabled="isRejecting || isSigning"
+            aria-label="{{ 'Reject' | translate }}"
+          >
+            <span ng-if="!isRejecting" translate>Reject</span>
+            <span ng-if="isRejecting" class="sig-btn-loading">
+              <md-progress-circular
+                class="sig-inline-spinner"
+                md-mode="indeterminate"
+                md-diameter="18"
+              ></md-progress-circular>
+              <span translate>Rejecting…</span>
+            </span>
+          </md-button>
+
+          <!-- BOUTONS D'ACTION SELON LE STATUT DU PROCESSUS -->
+          <md-button
+            class="md-raised md-primary sig-sign-btn"
+            ng-click="proceedToSign($event)"
+            ng-if="isMyTurn"
+            ng-disabled="isSigning"
+            aria-label="{{ 'Sign' | translate }}"
+          >
+            <span ng-if="!isSigning" translate>Sign</span>
+            <span ng-if="isSigning" class="sig-btn-loading">
+              <md-progress-circular
+                class="sig-inline-spinner"
+                md-mode="indeterminate"
+                md-diameter="18"
+              ></md-progress-circular>
+              <span translate>Signing…</span>
+            </span>
+          </md-button>
+
+          <div
+            ng-if="!isMyTurn && hasAlreadySigned"
+            class="sig-already-signed"
+            style="
+              display: inline-flex;
+              align-items: center;
+              gap: 6px;
+              color: #166534;
+              font-size: 13px;
+              font-weight: 600;
+              padding: 4px 10px;
+              background-color: #f0fdf4;
+              border: 1px solid #bbf7d0;
+              border-radius: 6px;
+            "
+          >
+            <md-icon
+              style="
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
+                min-width: 18px;
+                min-height: 18px;
+                line-height: 18px;
+                color: #16a34a;
+                margin: 0;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+              "
+              >check_circle</md-icon
+            >
+            <span style="line-height: 18px; display: inline-block" translate
+              >You have signed this document</span
+            >
+          </div>
+
+          <div
+            ng-if="!isMyTurn && !hasAlreadySigned && request.status === 'pending'"
+            class="sig-waiting-turn"
+            style="
+              display: inline-flex;
+              align-items: center;
+              gap: 6px;
+              color: #b45309;
+              font-size: 13px;
+              font-weight: 500;
+              padding: 4px 10px;
+              background-color: #fffbeb;
+              border: 1px solid #fde68a;
+              border-radius: 6px;
+            "
+          >
+            <md-icon
+              style="
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
+                min-width: 18px;
+                min-height: 18px;
+                line-height: 18px;
+                color: #d97706;
+                margin: 0;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+              "
+              >hourglass_empty</md-icon
+            >
+            <span style="line-height: 18px; display: inline-block" translate
+              >Waiting for the previous signatory</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BANDEAU D'ALERTE REFUS -->
+    <div
+      ng-if="request.status === 'rejected'"
+      style="
+        background-color: #fef2f2;
+        border-bottom: 1px solid #fee2e2;
+        padding: 10px 24px;
+        color: #991b1b;
+        font-size: 13px;
+      "
+      layout="row"
+      layout-align="start center"
+    >
+      <md-icon style="color: #dc2626; margin-right: 8px; font-size: 20px"
+        >error_outline</md-icon
+      >
+      <span
+        ><strong translate>Document rejected:</strong> {{ request.rejectionReason || rejectedFallbackMessage }}</span
+      >
+    </div>
+
+    <!-- ZONE PRINCIPALE (75% PDF / 25% SIDEBAR) -->
+    <div layout="row" flex class="sig-main-content">
+      <!-- PANNEAU PDF -->
+      <div
+        flex="75"
+        class="pdf-viewport-panel"
+        layout="column"
+        layout-align="center center"
+      >
+        <pdf-viewer
+          pdf-url="pdfUrl"
+          current-page="pdfState.currentPage"
+          total-pages="pdfState.totalPages"
+          scale="pdfState.scale"
+          pdf-state="pdfState"
+        >
+          <!-- BOÎTES DE SIGNATURE PAR ÉTAPE (affichées uniquement pour les étapes non encore signées) -->
+          <div
+            ng-repeat="sig in signatories track by sig.id"
+            ng-if="sig.page == pdfState.currentPage && sig.status !== 'signed'"
+            class="sig-locked-box"
+            ng-class="{'sig-box-current-signer': (sig.order === request.currentStep && isMyTurn), 'sig-box-signed': sig.status === 'signed'}"
+            ng-style="{
+               'left': (((sig.x !== undefined ? sig.x : 100)) * (pdfState.scale || 1.0)) + 'px',
+               'top': (((sig.y !== undefined ? sig.y : 100)) * (pdfState.scale || 1.0)) + 'px',
+               'width': (((sig.width !== undefined ? sig.width : 180)) * (pdfState.scale || 1.0)) + 'px',
+               'height': (((sig.height !== undefined ? sig.height : 60)) * (pdfState.scale || 1.0)) + 'px'
+             }"
+          >
+            <div
+              class="sig-soft-tag"
+              ng-if="sig.order === request.currentStep && isMyTurn"
+              style="
+                background: #006fba;
+                color: #fff;
+                padding: 2px 6px;
+                font-size: 10px;
+                font-weight: 600;
+              "
+            >
+              <span translate translate-values="{order: sig.order}">#{{order}} - Your signature</span>
+            </div>
+            <div
+              class="sig-soft-tag sig-soft-tag-signed"
+              ng-if="sig.status === 'signed'"
+              style="
+                background: #166534;
+                color: #fff;
+                padding: 2px 6px;
+                font-size: 10px;
+                font-weight: 600;
+              "
+            >
+              <span translate translate-values="{order: sig.order}">#{{order}} - Signed</span>
+            </div>
+            <div
+              class="sig-soft-tag sig-soft-tag-other"
+              ng-if="sig.status !== 'signed' && !(sig.order === request.currentStep && isMyTurn)"
+              style="
+                background: #475569;
+                color: #fff;
+                padding: 2px 6px;
+                font-size: 10px;
+                font-weight: 600;
+              "
+            >
+              <span>#{{ sig.order }} - {{ sig.name }}</span>
+            </div>
+
+            <div
+              class="sig-locked-body"
+              layout="row"
+              layout-align="center center"
+              style="flex: 1; padding: 4px"
+            >
+              <!-- Aperçu de l'image de signature si choisie -->
+              <img
+                ng-if="(sig.order === request.currentStep && isMyTurn) && signatureImage"
+                ng-src="{{ signatureImage }}"
+                class="sig-custom-stamp"
+                alt="{{ 'Signature' | translate }}"
+                style="max-height: 100%; max-width: 100%; object-fit: contain"
+              />
+              <div
+                ng-if="!((sig.order === request.currentStep && isMyTurn) && signatureImage)"
+                class="sig-soft-hint"
+                style="font-size: 11px; color: #64748b; text-align: center"
+              >
+                <span ng-if="sig.order === request.currentStep && isMyTurn" translate
+                  >Your signature placeholder</span
+                >
+                <span ng-if="sig.status === 'signed'" translate>Digitally signed</span>
+                <span
+                  ng-if="sig.status !== 'signed' && !(sig.order === request.currentStep && isMyTurn)"
+                  translate translate-values="{order: sig.order}"
+                  >Pending (Step {{order}})</span
+                >
+              </div>
+            </div>
+          </div>
+        </pdf-viewer>
+      </div>
+
+      <!-- SIDEBAR DU SIGNATAIRE (CONFORME À L'IMAGE) -->
+      <div
+        flex="25"
+        class="sig-sidebar"
+        layout="column"
+        style="padding: 16px; background-color: #f8fafc; box-sizing: border-box"
+      >
+        <!-- BANDE D'IMPORT D'IMAGE DE SIGNATURE -->
+        <div class="sig-compact-upload-wrapper" ng-if="isMyTurn">
+          <input
+            type="file"
+            id="sig-file-upload"
+            style="display: none"
+            accept="image/png,image/jpeg,image/jpg"
+            onchange="angular.element(this).scope().onFileSelected(this.files)"
+          />
+
+          <button
+            type="button"
+            class="sig-compact-upload-bar"
+            ng-if="!signatureImage"
+            ng-click="triggerFileInput()"
+            style="
+              background: #ffffff;
+              border: 1.5px dashed #cfd8dc;
+              border-radius: 6px;
+              padding: 10px 14px;
+              width: 100%;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 8px;
+              font-weight: 600;
+              font-size: 13px;
+              color: #334155;
+              line-height: 20px;
+            "
+          >
+            <md-icon
+              style="
+                font-size: 20px;
+                width: 20px;
+                height: 20px;
+                min-width: 20px;
+                min-height: 20px;
+                line-height: 20px;
+                color: #475569;
+                margin: 0;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+              "
+              >add_photo_alternate</md-icon
+            >
+            <span style="line-height: 20px; display: inline-block" translate
+              >Upload a signature</span
+            >
+          </button>
+
+          <!-- Aperçu quand chargée -->
+          <div
+            class="sig-compact-preview-zone"
+            ng-if="signatureImage"
+            layout="row"
+            layout-align="space-between center"
+            style="
+              background: #ffffff;
+              border: 1px solid #cfd8dc;
+              border-radius: 6px;
+              padding: 8px 12px;
+            "
+          >
+            <div
+              class="sig-compact-preview-img-box"
+              style="
+                max-height: 40px;
+                max-width: 120px;
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+              "
+            >
+              <img
+                ng-src="{{ signatureImage }}"
+                alt="{{ 'Signature' | translate }}"
+                style="max-height: 38px; max-width: 100%; object-fit: contain"
+              />
+            </div>
+            <div layout="row" layout-align="end center" style="gap: 6px">
+              <button
+                type="button"
+                class="sig-compact-remove-btn"
+                ng-click="triggerFileInput()"
+                style="
+                  color: #006fba;
+                  font-weight: 600;
+                  font-size: 11px;
+                  background: none;
+                  border: none;
+                  cursor: pointer;
+                "
+                title="{{ 'Change image' | translate }}"
+              >
+                <span translate>Edit</span>
+              </button>
+              <button
+                type="button"
+                class="sig-compact-remove-btn"
+                ng-click="removeSignatureImage()"
+                style="
+                  color: #dc2626;
+                  font-weight: 600;
+                  font-size: 11px;
+                  background: none;
+                  border: none;
+                  cursor: pointer;
+                "
+                title="{{ 'Delete' | translate }}"
+              >
+                <span translate>Delete</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARTE UNIQUE PROGRESSION DU DOCUMENT -->
+        <div
+          class="sig-timeline-section"
+          style="
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+          "
+        >
+          <div
+            class="sig-timeline-title"
+            style="
+              font-size: 14px;
+              font-weight: 700;
+              color: #0f172a;
+              margin-bottom: 14px;
+              padding-bottom: 8px;
+              border-bottom: 1px solid #f1f5f9;
+            "
+          >
+            <span translate>Document progress</span>
+          </div>
+
+          <div
+            class="sig-timeline-item"
+            ng-repeat="sig in signatories track by sig.id"
+            ng-click="goToPage(sig.page)"
+            style="
+              display: flex;
+              align-items: center;
+              gap: 12px;
+              margin-bottom: 14px;
+              cursor: pointer;
+              padding: 4px;
+              border-radius: 6px;
+              transition: background-color 0.15s ease;
+            "
+          >
+            <!-- Pastille ronde -->
+            <div
+              class="sig-timeline-marker"
+              ng-style="{
+                 'background-color': (sig.status === 'signed' ? '#16a34a' : (sig.order === request.currentStep ? '#0284c7' : '#94a3b8')),
+                 'width': '26px',
+                 'height': '26px',
+                 'min-width': '26px',
+                 'border-radius': '50%',
+                 'display': 'flex',
+                 'align-items': 'center',
+                 'justify-content': 'center',
+                 'color': '#fff',
+                 'font-weight': '700',
+                 'font-size': '12px'
+               }"
+            >
+              <md-icon
+                ng-if="sig.status === 'signed'"
+                style="
+                  font-size: 16px !important;
+                  width: 16px !important;
+                  height: 16px !important;
+                  min-width: 16px !important;
+                  min-height: 16px !important;
+                  color: #fff !important;
+                  margin: 0 !important;
+                  line-height: 16px !important;
+                  display: inline-flex !important;
+                  align-items: center !important;
+                  justify-content: center !important;
+                "
+                >check</md-icon
+              >
+              <md-icon
+                ng-if="sig.status === 'rejected'"
+                style="
+                  font-size: 16px !important;
+                  width: 16px !important;
+                  height: 16px !important;
+                  min-width: 16px !important;
+                  min-height: 16px !important;
+                  color: #fff !important;
+                  margin: 0 !important;
+                  line-height: 16px !important;
+                  display: inline-flex !important;
+                  align-items: center !important;
+                  justify-content: center !important;
+                "
+                >close</md-icon
+              >
+              <span ng-if="sig.status !== 'signed' && sig.status !== 'rejected'"
+                >{{ sig.order }}</span
+              >
+            </div>
+
+            <!-- Nom & Statut -->
+            <div
+              class="sig-timeline-content"
+              style="display: flex; flex-direction: column; flex: 1"
+            >
+              <div
+                class="sig-timeline-name"
+                style="font-size: 13.5px; font-weight: 700; color: #1e293b"
+              >
+                {{ sig.name || (sig.user.firstname + ' ' + sig.user.lastname) }}
+              </div>
+              <div
+                class="sig-timeline-status"
+                style="font-size: 12px; font-weight: 600; margin-top: 2px"
+              >
+                <span ng-if="sig.status === 'signed'" style="color: #166534" translate
+                  >Signed</span
+                >
+                <span
+                  ng-if="sig.status === 'pending' && sig.order === request.currentStep"
+                  style="color: #0284c7"
+                  translate
+                  >Awaiting signature</span
+                >
+                <span
+                  ng-if="sig.status === 'pending' && sig.order > request.currentStep"
+                  style="color: #94a3b8; font-weight: 500"
+                  translate
+                  >Pending</span
+                >
+                <span ng-if="sig.status === 'rejected'" style="color: #dc2626" translate
+                  >Refused</span
+                >
+              </div>
+            </div>
+
+            <!-- Bouton pour aller sur la page si différente -->
+            <button
+              type="button"
+              class="sig-page-switch-btn"
+              ng-if="sig.page && sig.page != currentPage"
+              ng-click="$event.stopPropagation(); goToPage(sig.page)"
+              style="font-size: 10px; padding: 2px 6px"
+            >
+              P.{{ sig.page }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

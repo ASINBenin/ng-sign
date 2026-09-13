@@ -1,0 +1,81 @@
+<md-dialog aria-label="{{ 'Signatories progress' | translate }}" md-theme="light" class="sig-stepper-dialog-soft">
+  <md-toolbar class="sig-stepper-toolbar-soft">
+    <div class="md-toolbar-tools">
+      <h2 style="font-size: 15px; font-weight: 500; color: #fff;">{{ 'Signatories progress' | translate }} • {{ req.title }}</h2>
+      <span flex></span>
+      <md-button class="md-icon-button" ng-click="close()">
+        <md-icon style="color: #fff; font-size: 18px;">close</md-icon>
+      </md-button>
+    </div>
+  </md-toolbar>
+
+  <md-dialog-content class="sig-stepper-content-soft">
+    <!-- En-tête résumé discret -->
+    <div class="sig-summary-soft" layout="row" layout-align="space-between center">
+      <div layout="row" layout-align="start center" style="gap: 8px;">
+        <span style="font-size: 12px; font-weight: 600; color: #006fba;">#{{ req.id }}</span>
+        <signature-status-chip status="req.status"></signature-status-chip>
+      </div>
+      <span style="font-size: 11.5px; color: #64748b; font-weight: 500;">{{ getSignedCount() }} / {{ req.signatories.length }} {{ 'signature(s)' | translate }}</span>
+    </div>
+
+    <!-- Alerte Motif de refus global si refusé -->
+    <div ng-if="req.status === 'rejected' && req.rejectionReason" style="margin: 0 16px 12px 16px; padding: 8px 12px; background-color: #fef2f2; border-left: 3px solid #dc2626; border-radius: 3px; font-size: 11.5px; color: #991b1b;">
+      <strong translate>Rejection reason:</strong> {{ req.rejectionReason }}
+    </div>
+
+    <!-- Timeline fine et discrète -->
+    <div class="sig-timeline-soft">
+      <div class="sig-timeline-row" ng-repeat="s in req.signatories track by s.id" ng-class="{'sig-row-active': s.order === req.currentStep && req.status !== 'finished' && req.status !== 'signed'}">
+        <!-- Ligne verticale fine -->
+        <div class="sig-line-soft" ng-if="!$last"></div>
+
+        <!-- Point / Nœud compact (24px) -->
+        <div class="sig-dot-soft" ng-class="{'sig-dot-signed': s.status === 'signed', 'sig-dot-current': s.order === req.currentStep && s.status === 'pending', 'sig-dot-waiting': s.status === 'pending' && s.order > req.currentStep, 'sig-dot-rejected': s.status === 'rejected'}">
+          <md-icon ng-if="s.status === 'signed'">check</md-icon>
+          <md-icon ng-if="s.status === 'rejected'">close</md-icon>
+          <md-icon ng-if="s.status === 'pending' && s.order === req.currentStep">edit</md-icon>
+          <md-icon ng-if="s.status === 'pending' && s.order > req.currentStep">schedule</md-icon>
+        </div>
+
+        <!-- Détails du signataire -->
+        <div class="sig-card-soft" flex>
+          <div layout="row" layout-align="space-between center">
+            <span class="sig-user-name-soft">{{ s.userName }}</span>
+            <span class="sig-pill-soft" ng-class="{'sig-pill-signed': s.status === 'signed', 'sig-pill-current': s.order === req.currentStep && s.status === 'pending', 'sig-pill-waiting': s.status === 'pending' && s.order > req.currentStep, 'sig-pill-rejected': s.status === 'rejected'}">
+              <span ng-if="s.status === 'signed'" translate>Signed</span>
+              <span ng-if="s.status !== 'signed' && s.order === req.currentStep && s.status === 'pending'" translate>Awaiting signature</span>
+              <span ng-if="s.status === 'rejected'" translate>Refused</span>
+              <span ng-if="s.status === 'pending' && s.order > req.currentStep" translate>Queued</span>
+            </span>
+          </div>
+
+          <div class="sig-meta-soft" layout="row" layout-align="start center">
+            <span ng-if="s.signedAt" class="sig-signed-date">
+              <md-icon>schedule</md-icon>
+              <span>{{ s.signedAt }}</span>
+            </span>
+            <span ng-if="s.status === 'pending' && s.order === req.currentStep" class="sig-step-current-hint">
+              <md-icon>hourglass_empty</md-icon>
+              <span translate>Current step</span>
+            </span>
+            <span ng-if="s.status === 'pending' && s.order > req.currentStep" class="sig-step-next-hint">
+              <span translate>Next step</span>
+            </span>
+          </div>
+
+          <!-- Motif individuel de refus -->
+          <div ng-if="s.status === 'rejected' && s.rejectionReason" style="margin-top: 6px; padding: 4px 8px; background-color: #fef2f2; border: 1px solid #fee2e2; border-radius: 3px; font-size: 11px; color: #991b1b;">
+            <strong translate>Reason:</strong> {{ s.rejectionReason }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </md-dialog-content>
+
+  <md-dialog-actions layout="row" layout-align="end center" style="padding: 6px 14px;">
+    <md-button ng-click="close()" class="md-raised sig-btn-xs" style="min-width: 70px;" translate>
+      Close
+    </md-button>
+  </md-dialog-actions>
+</md-dialog>

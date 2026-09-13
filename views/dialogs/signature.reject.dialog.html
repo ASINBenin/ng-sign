@@ -1,0 +1,31 @@
+<md-dialog aria-label="{{ 'Reject the signature' | translate }}" class="sig-method-dialog-refined" md-theme="light" style="max-width: 460px; background-color: #ffffff;">
+  <md-toolbar class="sig-dialog-header" style="background-color: #dc2626 !important;">
+    <div class="md-toolbar-tools">
+      <h2 style="font-size: 15px; font-weight: 600; color: #fff;" translate>Refuse to sign the document</h2>
+      <span flex></span>
+      <md-button class="md-icon-button" ng-click="cancel()">
+        <md-icon style="color: #fff; font-size: 18px;">close</md-icon>
+      </md-button>
+    </div>
+  </md-toolbar>
+
+  <md-dialog-content class="sig-dialog-body" style="padding: 20px; background-color: #ffffff;">
+    <p style="font-size: 13px; color: #475569; margin: 0 0 14px 0; line-height: 1.5;" translate>
+      Please specify the reason why you are refusing to sign this document. This reason will be recorded and visible to all signatories and the initiator.
+    </p>
+
+    <md-input-container class="md-block" md-theme="light" style="margin-bottom: 0;">
+      <label style="color: #475569 !important;" translate>Detailed reason for rejection</label>
+      <textarea ng-model="reason" rows="4" md-maxlength="500" required placeholder="{{ 'E.g.: Error in the amount of security measures at step 3...' | translate }}" style="color: #0f172a !important;"></textarea>
+    </md-input-container>
+  </md-dialog-content>
+
+  <md-dialog-actions layout="row" layout-align="end center" style="padding: 10px 16px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; gap: 8px;">
+    <md-button ng-click="cancel()" class="sig-cancel-btn" translate>
+      Cancel
+    </md-button>
+    <md-button ng-click="confirmReject()" class="md-raised" ng-disabled="!reason || !reason.trim()" style="background-color: #dc2626; color: #fff; margin: 0; font-size: 12px; font-weight: 600; text-transform: none; border-radius: 4px; min-height: 30px; height: 30px;" translate>
+      Confirm rejection
+    </md-button>
+  </md-dialog-actions>
+</md-dialog>

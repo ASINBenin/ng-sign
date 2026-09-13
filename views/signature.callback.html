@@ -1,0 +1,35 @@
+<div class="sig-callback-fullscreen" md-theme="light" layout="column" layout-align="center center">
+  
+  <!-- 1. Écran blanc de chargement centré pendant la transition (identique à signature.process) -->
+  <div ng-if="isLoading" class="sig-auth-loading-overlay" layout="column" layout-align="center center">
+    <md-progress-circular md-mode="indeterminate" md-diameter="48" style="margin-bottom: 16px;"></md-progress-circular>
+    <h3 style="color: #1e293b; font-weight: 600; font-size: 16px; margin: 0 0 6px 0;">{{ statusTitle }}</h3>
+    <p style="color: #64748b; font-size: 13px; margin: 0;">{{ statusMessage }}</p>
+  </div>
+
+
+  <!-- 3. Écran de Résultat : Échec ou Annulation -->
+  <div class="sig-callback-card sig-card-error" ng-if="isFinished && isError">
+    <div class="sig-callback-icon">
+      <md-icon style="font-size: 48px; width: 48px; height: 48px; color: #d32f2f;">error_outline</md-icon>
+    </div>
+    <h2 class="sig-callback-title" style="color: #b71c1c;">{{ statusTitle }}</h2>
+    <p class="sig-callback-desc">{{ statusMessage }}</p>
+
+    <div class="sig-callback-actions">
+      <md-button class="md-raised md-warn sig-btn-action" ng-click="retrySignature()">
+        <span class="sig-btn-inner">
+          <md-icon style="font-size: 16px; width: 16px; height: 16px; margin-right: 6px; color: #ffffff;">refresh</md-icon>
+          <span translate>Retry signature</span>
+        </span>
+      </md-button>
+
+      <md-button class="md-raised sig-btn-action sig-btn-list" ng-click="goToSignatureList()">
+        <span class="sig-btn-inner">
+          <md-icon style="font-size: 16px; width: 16px; height: 16px; margin-right: 6px; color: #455a64;">list_alt</md-icon>
+          <span translate>Signature process list</span>
+        </span>
+      </md-button>
+    </div>
+  </div>
+</div>

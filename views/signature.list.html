@@ -1,0 +1,136 @@
+<div flex ng-controller="SignatureListCtrl" class="anr-signatures-mgmt">
+  <md-card md-theme="light" class="main-card">
+    <!-- 1. Titre respectant la charte et taille MONARC -->
+    <div layout="row" layout-align="space-between center" class="md-padding-left md-padding-right" style="padding-top: 14px; padding-bottom: 6px;">
+      <span class="md-title" translate>Signature workflow</span>
+    </div>
+
+    <!-- 2. Filtres placés SOUS le titre pour ne pas être gênés par le bouton flottant -->
+    <div layout="row" layout-align="start center" class="md-padding-left md-padding-right" style="padding-bottom: 12px; margin-right: 48px;">
+      <form flex name="sigFilterForm" style="margin: 0;">
+        <md-input-container class="md-block" style="margin: 0; padding-right: 16px;">
+          <label><md-icon>search</md-icon> {{ 'Search for a deliverable...' | translate }}</label>
+          <input ng-model="searchFilter">
+        </md-input-container>
+      </form>
+
+      <md-select aria-label="{{ 'Filter by status' | translate }}" ng-model="statusFilter" style="font-size: 13px; margin: 0 12px 0 0; min-width: 170px;">
+        <md-option value="all">{{ 'All statuses' | translate }}</md-option>
+        <md-option value="pending">{{ 'Awaiting signature' | translate }}</md-option>
+        <md-option value="pending_configuration">{{ 'To configure' | translate }}</md-option>
+        <md-option value="signed">{{ 'Signed' | translate }}</md-option>
+        <md-option value="rejected">{{ 'Refused' | translate }}</md-option>
+      </md-select>
+
+      <md-button class="md-icon-button md-primary" ng-click="loadData()" aria-label="{{ 'Refresh' | translate }}" style="margin: 0;">
+        <md-tooltip md-direction="bottom">{{ 'Refresh' | translate }}</md-tooltip>
+        <md-icon>refresh</md-icon>
+      </md-button>
+    </div>
+
+    <!-- État de chargement -->
+    <div layout="column" layout-align="center center" ng-if="isLoading" class="md-padding" style="padding: 60px 0;">
+      <md-progress-circular md-indeterminate="true"></md-progress-circular>
+      <span style="font-size: 13px; color: #64748b; margin-top: 12px;" translate>Loading signature requests...</span>
+    </div>
+
+    <!-- État vide -->
+    <div layout="column" layout-align="center center" ng-if="!isLoading && (!requests || (requests | filter:filterRequests).length === 0)" style="padding: 60px 16px; text-align: center;">
+      <md-icon style="font-size: 48px; width: 48px; height: 48px; color: #94a3b8; margin-bottom: 12px;">description</md-icon>
+      <h3 style="font-size: 15px; font-weight: 600; color: #334155; margin: 0 0 6px 0;" translate>No signature process found</h3>
+      <p style="font-size: 12px; color: #64748b; margin: 0; max-width: 440px;" translate>
+        Signature requests are created when a deliverable is officially exported to PDF.
+      </p>
+    </div>
+
+    <!-- 3. Tableau respectant la charte du projet : Date en 1er, aucun icône dans nom ni boutons -->
+    <md-table-container flex ng-if="!isLoading && (requests | filter:filterRequests).length > 0">
+      <table md-table class="md-table">
+        <thead md-head>
+          <tr md-row>
+            <th md-column style="width: 18%;"><span translate>Date</span></th>
+            <th md-column style="width: 34%;"><span translate>Deliverable / Document</span></th>
+            <th md-column style="width: 18%;"><span translate>Workflow</span></th>
+            <th md-column style="width: 15%;"><span translate>Status</span></th>
+            <th md-column style="width: 15%; text-align: right;"><span translate>Actions</span></th>
+          </tr>
+        </thead>
+        <tbody md-body>
+          <tr md-row ng-repeat="req in requests | filter:filterRequests track by req.id" class="sig-table-row">
+            <!-- 1. Date affichée en premier -->
+            <td md-cell>
+              <span class="sig-date-text">{{ req.createdAt }}</span>
+            </td>
+
+            <!-- 2. Livrable / Document (SANS icône PDF) -->
+            <td md-cell>
+              <div class="sig-doc-info">
+                <span class="sig-doc-name" style="font-weight: 600; color: #1e293b;">{{ req.title }}</span>
+                <span class="sig-doc-tag" style="color: #64748b; font-size: 11px;" ng-if="req.creator" translate translate-values="{creator: req.creator}">Initiated by {{creator}}</span>
+              </div>
+            </td>
+
+            <!-- 4. Circuit & Progression -->
+            <td md-cell>
+              <button type="button" class="sig-stepper-btn-compact" ng-click="openStepperDialog(req, $event)" title="{{ 'View signatories detail' | translate }}">
+                <md-icon class="sig-circuit-icon">timeline</md-icon>
+                <span>{{ getSignedCount(req) }} / {{ req.signatories.length }} {{ 'signed' | translate }}</span>
+                <span class="sig-chevron-indicator">›</span>
+              </button>
+            </td>
+
+            <!-- 5. Statut -->
+            <td md-cell>
+              <signature-status-chip status="req.status"></signature-status-chip>
+            </td>
+
+            <!-- 6. Actions (Boutons textuels plats sans ombre conformes à la charte MONARC) -->
+            <td md-cell style="text-align: right;">
+              <div layout="row" layout-align="end center" style="gap: 6px;">
+                <!-- 1. Bouton Configurer (si en cours de configuration / brouillon) -->
+                <md-button ng-if="req.status === 'pending_configuration' || req.status === 'draft'"
+                           class="md-primary sig-table-btn"
+                           ng-click="goToSetup(req)"
+                           aria-label="{{ 'Configure' | translate }}">
+                  <span translate>Configure</span>
+                </md-button>
+
+                <!-- 2. Bouton Signer (quand le circuit est actif ET que c'est à son tour) -->
+                <md-button ng-if="isMyTurn(req)"
+                           class="md-primary sig-table-btn"
+                           ng-click="viewProcess(req)"
+                           aria-label="{{ 'Sign' | translate }}">
+                  <span translate>Sign</span>
+                </md-button>
+
+                <!-- 3. Bouton Consulter : Uniquement si en cours (pas mon tour) ou refusé -->
+                <md-button ng-if="!isMyTurn(req) && req.status !== 'pending_configuration' && req.status !== 'draft' && req.status !== 'finished' && req.status !== 'signed'"
+                           class="sig-table-btn sig-table-btn-neutral"
+                           ng-click="viewProcess(req)"
+                           aria-label="{{ 'View' | translate }}">
+                  <span translate>View</span>
+                </md-button>
+
+                <!-- 4. Bouton Télécharger : Uniquement quand la signature est finalisée -->
+                <md-button ng-if="req.status === 'finished' || req.status === 'signed'"
+                           class="md-primary sig-table-btn"
+                           ng-click="downloadPdf(req)"
+                           aria-label="{{ 'Download' | translate }}">
+                  <span translate>Download</span>
+                </md-button>
+
+                <!-- 5. Bouton Supprimer (si brouillon) -->
+                <md-button ng-if="req.status === 'pending_configuration' || req.status === 'draft'"
+                           class="md-warn sig-table-btn"
+                           ng-click="deleteRequest(req, $event)"
+                           aria-label="{{ 'Delete' | translate }}">
+                  <span translate>Delete</span>
+                </md-button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </md-table-container>
+  </md-card>
+</div>
