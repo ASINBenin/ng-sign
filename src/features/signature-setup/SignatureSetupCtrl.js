@@ -418,8 +418,10 @@
             })
             .catch(function (err) {
               $scope.isSaving = false;
-              var msg = (err && err.data && err.data.error) ? err.data.error : (err && err.statusText ? err.statusText : gettextCatalog.getString('Error while saving'));
-              toastr.error(msg);
+              // Les erreurs HTTP sont déjà affichées par l'intercepteur de ng-client
+              if (!err || !err.status) {
+                toastr.error(gettextCatalog.getString('Error while saving'));
+              }
             });
         };
 

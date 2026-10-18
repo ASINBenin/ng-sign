@@ -4,7 +4,8 @@
   angular
     .module('SignModule')
     .directive('pdfViewer', [
-      function () {
+      'SignatureProcessService',
+      function (SignatureProcessService) {
         return {
           restrict: 'E',
           transclude: true,
@@ -86,24 +87,29 @@
 
             function initPdf() {
               if (!scope.pdfUrl || !window.pdfjsLib || !canvas) return;
-              window.pdfjsLib.getDocument(scope.pdfUrl).promise.then(function (pdf) {
-                pdfDoc = pdf;
-                var total = pdf.numPages || 1;
-                var initialPage = parseInt(scope.currentPage, 10) || 1;
-                if (initialPage > total || initialPage < 1) {
-                  initialPage = 1;
-                }
-                if (!scope.$$phase && !scope.$root.$$phase) {
-                  scope.$apply(function () {
+              
+              SignatureProcessService.loadPdfData(scope.pdfUrl)
+                .then(function (data) {
+                  return window.pdfjsLib.getDocument({ data: data }).promise;
+                })
+                .then(function (pdf) {
+                  pdfDoc = pdf;
+                  var total = pdf.numPages || 1;
+                  var initialPage = parseInt(scope.currentPage, 10) || 1;
+                  if (initialPage > total || initialPage < 1) {
+                    initialPage = 1;
+                  }
+                  if (!scope.$$phase && !scope.$root.$$phase) {
+                    scope.$apply(function () {
+                      scope.totalPages = total;
+                      scope.currentPage = initialPage;
+                    });
+                  } else {
                     scope.totalPages = total;
                     scope.currentPage = initialPage;
-                  });
-                } else {
-                  scope.totalPages = total;
-                  scope.currentPage = initialPage;
-                }
-                collectAllPageDimensions();
-                renderPage(initialPage);
+                  }
+                  collectAllPageDimensions();
+                  renderPage(initialPage);
               }).catch(function (err) {
                 console.error('[PdfViewerDirective] Erreur chargement PDF:', err);
               });

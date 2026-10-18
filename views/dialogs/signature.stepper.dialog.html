@@ -26,7 +26,7 @@
 
     <!-- Timeline fine et discrète -->
     <div class="sig-timeline-soft">
-      <div class="sig-timeline-row" ng-repeat="s in req.signatories track by s.id" ng-class="{'sig-row-active': s.order === req.currentStep && req.status !== 'finished' && req.status !== 'signed'}">
+      <div class="sig-timeline-row" ng-repeat="s in req.signatories track by s.id" ng-class="{'sig-row-active': s.order === req.currentStep && req.status !== 'signed'}">
         <!-- Ligne verticale fine -->
         <div class="sig-line-soft" ng-if="!$last"></div>
 

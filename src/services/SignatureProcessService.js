@@ -59,6 +59,11 @@
             .then(function (res) { return res.data; });
         };
 
+        this.finalizeSignature = function (requestId) {
+          return $http.post('api/signature-requests/' + requestId + '/finalize')
+            .then(function (res) { return res.data; });
+        };
+
         this.getReauthUrl = function (requestId) {
           if (!requestId) {
             return $q.reject(new Error("requestId est obligatoire"));
@@ -67,16 +72,32 @@
             .then(function (res) { return res.data; });
         };
 
-        this.uploadSignedPdf = function (requestId, pdfBlob, certSubject) {
+        this.loadPdfData = function (pdfUrl) {
+          return $http.get(pdfUrl, { responseType: 'arraybuffer' })
+            .then(function (res) { return new Uint8Array(res.data); });
+        };
+
+        this.downloadPdf = function (requestId) {
+          return this.downloadCurrentPdfBlob(requestId).then(function (blob) {
+            var url = URL.createObjectURL(blob);
+            var link = document.createElement('a');
+            link.href = url;
+            link.download = 'document_signe_' + requestId + '.pdf';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+          });
+        };
+
+
+        this.uploadSignedPdf = function (requestId, pdfBlob) {
           if (!requestId || !pdfBlob) {
             return $q.reject(new Error("requestId et pdfBlob sont obligatoires"));
           }
           var formData = new FormData();
           var file = pdfBlob instanceof File ? pdfBlob : new File([pdfBlob], 'signed_document.pdf', { type: 'application/pdf' });
           formData.append('file', file);
-          if (certSubject) {
-            formData.append('certificateSubject', certSubject);
-          }
 
           return $http.post('api/signature-requests/' + requestId + '/upload-signed', formData, {
             transformRequest: angular.identity,

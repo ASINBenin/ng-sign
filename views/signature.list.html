@@ -88,7 +88,7 @@
             <td md-cell style="text-align: right;">
               <div layout="row" layout-align="end center" style="gap: 6px;">
                 <!-- 1. Bouton Configurer (si en cours de configuration / brouillon) -->
-                <md-button ng-if="req.status === 'pending_configuration' || req.status === 'draft'"
+                <md-button ng-if="req.status === 'pending_configuration'"
                            class="md-primary sig-table-btn"
                            ng-click="goToSetup(req)"
                            aria-label="{{ 'Configure' | translate }}">
@@ -104,7 +104,7 @@
                 </md-button>
 
                 <!-- 3. Bouton Consulter : Uniquement si en cours (pas mon tour) ou refusé -->
-                <md-button ng-if="!isMyTurn(req) && req.status !== 'pending_configuration' && req.status !== 'draft' && req.status !== 'finished' && req.status !== 'signed'"
+                <md-button ng-if="!isMyTurn(req) && req.status !== 'pending_configuration' && req.status !== 'signed'"
                            class="sig-table-btn sig-table-btn-neutral"
                            ng-click="viewProcess(req)"
                            aria-label="{{ 'View' | translate }}">
@@ -120,7 +120,7 @@
                 </md-button>
 
                 <!-- 5. Bouton Supprimer (si brouillon) -->
-                <md-button ng-if="req.status === 'pending_configuration' || req.status === 'draft'"
+                <md-button ng-if="req.status === 'pending_configuration'"
                            class="md-warn sig-table-btn"
                            ng-click="deleteRequest(req, $event)"
                            aria-label="{{ 'Delete' | translate }}">

@@ -11,11 +11,12 @@
       '$window',
       '$mdDialog',
       'SignatureRequestService',
+      'SignatureProcessService',
       'UserProfileService',
       'ClientAnrService',
       'toastr',
       'gettextCatalog',
-      function ($scope, $rootScope, $state, $stateParams, $window, $mdDialog, SignatureRequestService, UserProfileService, ClientAnrService, toastr, gettextCatalog) {
+      function ($scope, $rootScope, $state, $stateParams, $window, $mdDialog, SignatureRequestService, SignatureProcessService, UserProfileService, ClientAnrService, toastr, gettextCatalog) {
         $scope.modelId = parseInt($stateParams.modelId || $rootScope.getUrlAnrId(), 10);
         $scope.model = $scope.model || ($scope.$parent && $scope.$parent.model ? $scope.$parent.model : {});
         $scope.isLoading = true;
@@ -27,9 +28,9 @@
         $scope.filterRequests = function (req) {
           if (!req) return false;
           if ($scope.statusFilter && $scope.statusFilter !== 'all') {
-            if ($scope.statusFilter === 'pending_configuration' && req.status !== 'pending_configuration' && req.status !== 'draft') return false;
+            if ($scope.statusFilter === 'pending_configuration' && req.status !== 'pending_configuration') return false;
             if ($scope.statusFilter === 'pending' && req.status !== 'pending' && req.status !== 'partially_signed') return false;
-            if ($scope.statusFilter === 'signed' && req.status !== 'finished' && req.status !== 'signed') return false;
+            if ($scope.statusFilter === 'signed' && req.status !== 'signed') return false;
             if ($scope.statusFilter === 'rejected' && req.status !== 'rejected') return false;
           }
           if ($scope.searchFilter) {
@@ -106,14 +107,15 @@
             })
             .catch(function (err) {
               $scope.isLoading = false;
-              var msg = (err && err.data && err.data.error) ? err.data.error : gettextCatalog.getString('Error loading signature requests');
-              toastr.error(msg);
+              // Les erreurs HTTP sont déjà affichées par l'intercepteur de ng-client
+              if (!err || !err.status) {
+                toastr.error(gettextCatalog.getString('Error loading signature requests'));
+              }
             });
         };
 
         $scope.downloadPdf = function (req) {
-          var downloadUrl = SignatureRequestService.getPdfUrl(req.id);
-          $window.open(downloadUrl, '_blank');
+          SignatureProcessService.downloadPdf(req.id);
         };
 
         $scope.viewProcess = function (req) {
@@ -121,10 +123,7 @@
         };
 
         $scope.isMyTurn = function (req) {
-          if (!req || req.status === 'finished' || req.status === 'signed' || req.status === 'rejected' || req.status === 'pending_configuration' || req.status === 'draft') {
-            return false;
-          }
-          if (req.status !== 'pending' && req.status !== 'partially_signed') {
+          if (!req || (req.status !== 'pending' && req.status !== 'partially_signed')) {
             return false;
           }
           if (!$scope.connectedUser || !req.signatories || !req.signatories.length) {
@@ -186,8 +185,9 @@
                 $scope.loadData();
               })
               .catch(function (err) {
-                var msg = (err && err.data && err.data.error) ? err.data.error : gettextCatalog.getString('Error while deleting');
-                toastr.error(msg);
+                if (!err || !err.status) {
+                  toastr.error(gettextCatalog.getString('Error while deleting'));
+                }
               });
           });
         };

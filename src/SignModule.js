@@ -44,7 +44,7 @@
             },
           })
           .state('main.project.anr.signatureCallback', {
-            url: '/signature-callback/:requestId?status&signatureSuccess&signatureStatus&signatureError',
+            url: '/signature-callback/:requestId?status&signatureSuccess&signatureError',
             views: {
               'main@main': {
                 templateUrl: 'views/sign/signature.callback.html',
@@ -59,7 +59,6 @@
               requestId: null,
               status: null,
               signatureSuccess: null,
-              signatureStatus: null,
               signatureError: null,
             },
           })

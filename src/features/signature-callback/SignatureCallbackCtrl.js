@@ -10,15 +10,12 @@
       '$stateParams',
       '$window',
       '$location',
-      '$q',
-      'SignatureRequestService',
-      'SignatureProcessService',
-      'ClientAnrService',
-      'UserService',
-      'UserProfileService',
       'toastr',
       'gettextCatalog',
-      function ($scope, $rootScope, $state, $stateParams, $window, $location, $q, SignatureRequestService, SignatureProcessService, ClientAnrService, UserService, UserProfileService, toastr, gettextCatalog) {
+      'SignatureProcessService',
+      'ClientAnrService',
+      'UserProfileService',
+      function ($scope, $rootScope, $state, $stateParams, $window, $location, toastr, gettextCatalog, SignatureProcessService, ClientAnrService, UserProfileService) {
         $scope.modelId = parseInt($stateParams.modelId || $rootScope.getUrlAnrId(), 10);
         $scope.requestId = $stateParams.requestId ? parseInt($stateParams.requestId, 10) : null;
         $scope.model = $scope.model || {};
@@ -88,46 +85,43 @@
             return;
           }
 
-          var txCompleted = $window.sessionStorage.getItem('tx_signing_completed') === 'true';
-          if (txCompleted || signatureSuccess === '1' || signatureSuccess === 'true') {
-            $window.sessionStorage.removeItem('tx_signing_completed');
+          if (signatureSuccess === '1' || signatureSuccess === 'true') {
             toastr.success(gettextCatalog.getString('Your signature has been saved successfully.'));
             cleanUrlParams();
-            $state.go('main.project.anr.signatureProcess', {
-              modelId: $scope.modelId,
-              requestId: $scope.requestId
-            });
+            goToSignatureProcess();
             return;
           }
 
           if (status === 'finished') {
-            $window.sessionStorage.setItem('tx_signing_completed', 'true');
             $scope.statusTitle = gettextCatalog.getString('Signature confirmed, preloading the document...');
             $scope.statusMessage = gettextCatalog.getString('Please wait, finalizing...');
-
-            SignatureProcessService.getReauthUrl($scope.requestId)
-              .then(function (res) {
-                if (res && res.url) {
-                  $window.location.href = res.url;
-                } else {
-                  $window.sessionStorage.removeItem('tx_signing_completed');
-                  $state.go('main.project.anr.signatureProcess', {
-                    modelId: $scope.modelId,
-                    requestId: $scope.requestId
-                  });
-                }
-              })
-              .catch(function (err) {
-                console.error('[SignatureCallbackCtrl] getReauthUrl erreur:', err);
-                $window.sessionStorage.removeItem('tx_signing_completed');
-                $state.go('main.project.anr.signatureProcess', {
-                  modelId: $scope.modelId,
-                  requestId: $scope.requestId
-                });
-              });
+            finalizeOrReauthorize();
             return;
           }
 
+          goToSignatureProcess();
+        }
+
+        // Finalise avec le jeton TrustedX stocké ; sinon ré-autorisation OAuth2 (retour sur /callback avec code)
+        function finalizeOrReauthorize() {
+          SignatureProcessService.finalizeSignature($scope.requestId)
+            .then(function (res) {
+              if (res.finalized) {
+                toastr.success(gettextCatalog.getString('Your signature has been saved successfully.'));
+                cleanUrlParams();
+                goToSignatureProcess();
+                return;
+              }
+              return SignatureProcessService.getReauthUrl($scope.requestId).then(function (reauth) {
+                $window.location.href = reauth.url;
+              });
+            })
+            .catch(function () {
+              goToSignatureProcess();
+            });
+        }
+
+        function goToSignatureProcess() {
           $state.go('main.project.anr.signatureProcess', {
             modelId: $scope.modelId,
             requestId: $scope.requestId
@@ -135,8 +129,7 @@
         }
 
         $scope.downloadSignedDocument = function () {
-          var downloadUrl = SignatureProcessService.getPdfUrl($scope.requestId);
-          $window.open(downloadUrl, '_blank');
+          SignatureProcessService.downloadPdf($scope.requestId);
         };
 
         $scope.goToSignatureList = function () {

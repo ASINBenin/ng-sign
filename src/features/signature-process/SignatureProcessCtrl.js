@@ -250,21 +250,6 @@
             loadData();
           }
 
-          var isPending = (window.location.href.indexOf('signaturePending=1') !== -1);
-          if (isPending) {
-            toastr.info(gettextCatalog.getString('Your signature has been recorded. The signed document will be available after SSO reauthentication.'), gettextCatalog.getString('Signature recorded'), { timeOut: 8000 });
-          }
-
-          var isCanceled = (window.location.href.indexOf('signatureStatus=cancel') !== -1 || window.location.href.indexOf('signatureStatus=canceled') !== -1);
-          if (isCanceled) {
-            toastr.info(gettextCatalog.getString('The signature procedure has been interrupted.'));
-          }
-
-          var isFailed = (window.location.href.indexOf('signatureStatus=failed') !== -1);
-          if (isFailed) {
-            toastr.warning(gettextCatalog.getString('The signature could not be completed on TrustedX. The document remains available, you can try again.'));
-          }
-
           var hasError = (window.location.href.indexOf('signatureError=') !== -1);
           if (hasError) {
             var match = window.location.href.match(/signatureError=([^&]+)/);
@@ -273,17 +258,15 @@
             }
           }
 
-          if (isSuccess || isPending || isCanceled || isFailed || hasError) {
+          if (isSuccess || hasError) {
             if ($location && $location.search) {
               $location.search('signatureSuccess', null);
-              $location.search('signaturePending', null);
-              $location.search('signatureStatus', null);
               $location.search('signatureError', null);
               $location.search('status', null);
             }
             if ($window && $window.history && $window.history.replaceState) {
               var cleanUrl = $window.location.href
-                .replace(/([?&])(signatureSuccess|signaturePending|signatureStatus|signatureError|status)=[^&]*(&|$)/g, '$1')
+                .replace(/([?&])(signatureSuccess|signatureError|status)=[^&]*(&|$)/g, '$1')
                 .replace(/[?&]+$/, '');
               $window.history.replaceState({}, document.title, cleanUrl);
             }
@@ -464,8 +447,10 @@
             })
             .catch(function (err) {
               $scope.isSigning = false;
-              var msg = (err && err.data && err.data.error) ? err.data.error : gettextCatalog.getString('Unable to start the signature.');
-              toastr.error(msg, gettextCatalog.getString('TrustedX failure'));
+              // Les erreurs HTTP sont déjà affichées par l'intercepteur de ng-client
+              if (!err || !err.status) {
+                toastr.error(gettextCatalog.getString('Unable to start the signature.'), gettextCatalog.getString('TrustedX failure'));
+              }
             });
         }
 
@@ -505,10 +490,7 @@
               return BJeTokenService.signDocumentLocally(pdfBlob, position, $scope.signatureImage);
             })
             .then(function (result) {
-              var certData = (result.certificate && (result.certificate.data || result.certificate)) || {};
-              var certSubject = certData.subject || certData.cn || certData.alias || gettextCatalog.getString('BJ eToken certificate');
-
-              return SignatureProcessService.uploadSignedPdf($scope.requestId, result.signedBlob, certSubject);
+              return SignatureProcessService.uploadSignedPdf($scope.requestId, result.signedBlob);
             })
             .then(function () {
               $scope.isSigning = false;
@@ -517,6 +499,9 @@
             })
             .catch(function (err) {
               $scope.isSigning = false;
+              if (err && err.status) {
+                return;
+              }
               var msg = (err && err.message) ? err.message : (typeof err === 'string' ? err : gettextCatalog.getString('Local signature error'));
               toastr.error(msg, gettextCatalog.getString('Local signature failure'));
             });
@@ -549,8 +534,9 @@
               })
               .catch(function (err) {
                 $scope.isRejecting = false;
-                var msg = (err && err.data && err.data.error) ? err.data.error : gettextCatalog.getString('Error while rejecting');
-                toastr.error(msg);
+                if (!err || !err.status) {
+                  toastr.error(gettextCatalog.getString('Error while rejecting'));
+                }
               });
           });
         };
