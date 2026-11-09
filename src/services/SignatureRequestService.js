@@ -53,10 +53,8 @@
           var deliverableParams = angular.copy(deliverable || {});
           deliverableParams.deliverableDocType = typeDoc;
           deliverableParams.typedoc = typeDoc;
-          var defaultTitle = deliverableParams.docname || deliverableParams.name || deliverableParams.title || 'Untitled-Deliverable';
-          deliverableParams.docname = defaultTitle;
-          deliverableParams.name = defaultTitle;
-          deliverableParams.title = defaultTitle;
+          // Without a document name, the server names it after the analysis and the version
+          deliverableParams.docname = deliverableParams.docname || deliverableParams.name || deliverableParams.title || '';
 
           if (toastr) {
             toastr.info("Initialisation de la demande de signature...");
