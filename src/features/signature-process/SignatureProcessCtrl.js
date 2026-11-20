@@ -130,13 +130,12 @@
             : Promise.resolve(null);
 
           if ($scope.requestId) {
-            $scope.pdfUrl = SignatureProcessService.getPdfUrl($scope.requestId);
-
             Promise.resolve(profilePromise).then(function () {
               return SignatureProcessService.getSignatureRequest($scope.modelId, $scope.requestId);
             }).then(function (res) {
               var data = res.request || res;
               $scope.request = data;
+              $scope.pdfUrl = data.canViewDocument ? SignatureProcessService.getPdfUrl($scope.requestId) : null;
               $scope.signatories = (data.signatories || []).map(function (s, idx) {
                 var colorPair = colors[idx % colors.length];
                 var u = s.user || (s.userId ? { id: s.userId, firstname: s.userName || s.userFirstname, lastname: s.userLastname, email: s.userEmail } : {});

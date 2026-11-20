@@ -257,7 +257,12 @@
         layout="column"
         layout-align="center center"
       >
+        <div ng-if="request && !request.canViewDocument" class="sig-document-hidden" layout="column" layout-align="center center">
+          <md-icon>lock_outline</md-icon>
+          <p translate>The document will be visible when it is your turn to sign.</p>
+        </div>
         <pdf-viewer
+          ng-if="pdfUrl"
           pdf-url="pdfUrl"
           current-page="pdfState.currentPage"
           total-pages="pdfState.totalPages"

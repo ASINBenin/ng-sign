@@ -1396,3 +1396,40 @@ md-virtual-repeat-container.md-autocomplete-suggestions-container,
     border: 1px solid #cfd8dc !important;
 }
 .sig-btn-list:hover { background-color: #f1f5f9 !important; }
+
+/* Page de signature à hauteur d'écran : en-tête et panneau latéral fixes, seul le document défile */
+md-content.md-main-content:has(> .ng-scope > .signature-process-container) {
+    overflow: hidden !important;
+}
+md-content.md-main-content > .ng-scope:has(> .signature-process-container) {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+.signature-process-container {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    overflow: hidden !important;
+}
+.signature-process-container > div:not(.sig-auth-loading-overlay) {
+    min-height: 0 !important;
+}
+.signature-process-container .sig-main-content {
+    min-height: 0 !important;
+    overflow: hidden !important;
+    align-items: stretch !important;
+}
+.signature-process-container .pdf-viewport-panel {
+    min-height: 0 !important;
+}
+.signature-process-container .sig-sidebar {
+    position: static !important;
+    align-self: stretch !important;
+    max-height: none !important;
+}
+
+/* Document masqué tant que le circuit n'est pas arrivé à l'utilisateur */
+.sig-document-hidden { color: rgba(0, 0, 0, 0.54); text-align: center; }
+.sig-document-hidden md-icon { font-size: 48px; width: 48px; height: 48px; color: inherit; }
